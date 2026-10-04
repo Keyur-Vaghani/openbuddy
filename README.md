@@ -21,10 +21,7 @@ with a **source** toggle back to the code.
 
 ## Demo
 
-<p align="center">
-  <a href="media/demo.mp4"><img src="media/demo-poster.png" width="820" alt="Watch the OpenBuddy demo: a diagram, a chart, a status card and a live widget rendered in the Claude Code chat"></a>
-  <br><sub>▶ Watch the 1-minute demo (with sound)</sub>
-</p>
+https://github.com/user-attachments/assets/4115d3d2-cb60-41c0-bdab-be9cd8c28216
 
 ## What it looks like
 
