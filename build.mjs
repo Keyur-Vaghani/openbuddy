@@ -6,8 +6,8 @@ import { readFileSync } from "node:fs";
 const previewCss = readFileSync(new URL("./assets/preview.css", import.meta.url), "utf8");
 
 const host = {
-  entryPoints: ["src/extension.ts"],
-  outfile: "dist/extension.js",
+  entryPoints: ["src/extension.ts", "src/uninstall.ts"],
+  outdir: "dist",
   bundle: true,
   platform: "node",
   format: "cjs",

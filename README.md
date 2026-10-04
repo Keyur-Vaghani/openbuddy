@@ -66,11 +66,28 @@ Real screenshots of the same Claude Code reply, without and with OpenBuddy.
    (always the latest release; older versions are on [Releases](https://github.com/KeyurVaghani/openbuddy/releases)).
 2. In VS Code: **Extensions → ⋯ → Install from VSIX…**, pick the file, then reload the window — or run
    `code --install-extension openbuddy.vsix` from the folder you downloaded it to.
-3. Run **OpenBuddy: Copy Claude Instructions** from the command palette and paste the result into your
-   `CLAUDE.md` (project or `~/.claude/CLAUDE.md`). This tells Claude which fences it can use —
-   without it, Claude rarely writes them.
 
-To undo the patch, run **OpenBuddy: Remove from Claude Code Chat** and then uninstall the extension.
+That's all the setup. On first run OpenBuddy also installs a small Claude Code skill
+(`~/.claude/skills/openbuddy/SKILL.md`) that teaches Claude which blocks it can draw, so there is nothing to
+paste anywhere.
+
+## Use it
+
+Start a **new** Claude chat (skills load when a chat starts) and ask as usual. Claude draws a visual on its own
+when one makes the answer clearer, or you can ask for one directly:
+
+- *"How does login work in this app? Show it as a diagram."*
+- *"Which API endpoints are slowest? Chart it."*
+- *"Summarize what you changed as a status card."*
+- *"Build me a small calculator for our API costs."* — then press **▶ Run** on the widget.
+
+Every block has a **source** toggle to see the code Claude wrote. Want the visuals in every reply, not just when
+Claude picks them? Run **OpenBuddy: Copy Claude Instructions** and paste the result into a `CLAUDE.md`.
+
+## Remove
+
+Run **OpenBuddy: Remove from Claude Code Chat** (removes the patch and the skill), then uninstall the extension.
+Uninstalling also deletes the skill.
 
 ## Safety
 
@@ -98,6 +115,8 @@ variables and loads `dist/injected.js`.
 ```
 src/
   extension.ts          VS Code entry: patch on activate, self-heal, commands
+  skill.ts              install/remove the Claude skill (~/.claude/skills/openbuddy)
+  uninstall.ts          removes the skill when the extension is uninstalled
   host/patcher.ts       append/remove a marked block in Claude Code's webview/index.js
   host/selfHeal.ts      re-apply after Claude Code updates
   webview/main.ts       the script appended to the chat webview
@@ -105,7 +124,7 @@ src/
   webview/fenceBlocks.ts  shared fence plumbing (source toggle, toolbar, full window)
   webview/*Blocks.ts    one renderer per fence
 assets/preview.css      design system built into html-preview / html-app
-docs/claude-instructions.md  the CLAUDE.md snippet
+docs/claude-instructions.md  what Claude is taught (the skill body, and the optional CLAUDE.md snippet)
 ```
 
 ### Using OpenBuddy as a library

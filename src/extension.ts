@@ -1,8 +1,10 @@
 // VS Code entry point: patches Claude Code's chat webview with OpenBuddy and keeps it patched.
 
 import * as vscode from "vscode";
+import * as fs from "fs";
 import * as path from "path";
 import { createPatcher, watchBundles, type Patcher } from "./host";
+import { installSkill, removeSkill, skillFile } from "./skill";
 
 const RELOAD = "Reload Window";
 const CLAUDE_CODE_ID = "anthropic.claude-code";
@@ -35,29 +37,46 @@ function install(patcher: Patcher): void {
   }
 }
 
-// Copies the CLAUDE.md snippet that teaches Claude which fences OpenBuddy renders.
-async function copyInstructions(extensionUri: vscode.Uri): Promise<void> {
-  const file = vscode.Uri.joinPath(extensionUri, "docs", "claude-instructions.md");
-  const text = new TextDecoder().decode(await vscode.workspace.fs.readFile(file));
-  await vscode.env.clipboard.writeText(text);
-  vscode.window.showInformationMessage("OpenBuddy instructions copied. Paste them into your CLAUDE.md.");
+const readInstructions = (extensionPath: string) => fs.readFileSync(path.join(extensionPath, "docs", "claude-instructions.md"), "utf8");
+
+// Installs (or refreshes) the Claude skill so Claude knows the fences without any setup from the user.
+function teachClaude(extensionPath: string): void {
+  try {
+    const result = installSkill(readInstructions(extensionPath));
+    if (result === "installed") {
+      vscode.window.showInformationMessage("OpenBuddy is ready. Start a new Claude chat and ask it to draw something, e.g. \"show how login works as a diagram\".");
+    } else if (result === "userOwned") {
+      console.warn(`[openbuddy] ${skillFile()} exists and was not written by OpenBuddy; leaving it as is`);
+    }
+  } catch (e) {
+    console.error("[openbuddy] skill install failed", e);
+  }
+}
+
+// Copies the same instructions for anyone who wants them always on, in a CLAUDE.md.
+async function copyInstructions(extensionPath: string): Promise<void> {
+  await vscode.env.clipboard.writeText(readInstructions(extensionPath));
+  vscode.window.showInformationMessage("OpenBuddy instructions copied. Paste them into a CLAUDE.md to have them in every chat.");
 }
 
 export function activate(context: vscode.ExtensionContext): void {
   const patcher = createOpenBuddyPatcher();
   install(patcher);
+  teachClaude(context.extensionPath);
   for (const d of watchBundles(patcher)) context.subscriptions.push(d);
 
   context.subscriptions.push(
     vscode.commands.registerCommand("openbuddy.apply", () => {
       const res = patcher.patch();
+      teachClaude(context.extensionPath);
       promptReload(`OpenBuddy applied to ${res.patched.length} Claude version(s). Reload the window.`);
     }),
     vscode.commands.registerCommand("openbuddy.remove", () => {
       const restored = patcher.unpatch();
-      promptReload(`OpenBuddy removed from ${restored.length} Claude version(s). Reload the window.`);
+      removeSkill();
+      promptReload(`OpenBuddy removed from ${restored.length} Claude version(s) and its Claude skill deleted. Reload the window.`);
     }),
-    vscode.commands.registerCommand("openbuddy.copyInstructions", () => copyInstructions(context.extensionUri)),
+    vscode.commands.registerCommand("openbuddy.copyInstructions", () => copyInstructions(context.extensionPath)),
   );
 }
 
