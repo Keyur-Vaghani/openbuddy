@@ -1,0 +1,127 @@
+/* Design system built into html-preview / html-app fences, drawn from VS Code and Claude Code theme variables
+   so a preview reads as part of the chat. Override --accent in a fence's own <style> to re-hue. */
+
+:root {
+  --ink: var(--app-primary-foreground, var(--vscode-foreground, #ccc));
+  --ink-2: var(--app-secondary-foreground, var(--vscode-descriptionForeground, #9d9d9d));
+  --ink-3: color-mix(in srgb, var(--ink-2) 75%, transparent);
+  --line: var(--app-input-border, var(--vscode-widget-border, rgba(127,127,127,.35)));
+  --card: var(--app-code-background, var(--vscode-textCodeBlock-background, rgba(127,127,127,.12)));
+  --accent: var(--app-link-foreground, var(--vscode-textLink-foreground, #4daafc));
+  --good: var(--vscode-charts-green, #3fb950); --warn: var(--vscode-charts-yellow, #d29922);
+  --crit: var(--vscode-errorForeground, #f85149); --hold: var(--ink-2);
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --good-soft: color-mix(in srgb, var(--good) 14%, transparent);
+  --warn-soft: color-mix(in srgb, var(--warn) 14%, transparent);
+  --crit-soft: color-mix(in srgb, var(--crit) 14%, transparent);
+  --hold-soft: color-mix(in srgb, var(--hold) 14%, transparent);
+  --mono: var(--app-monospace-font-family, var(--vscode-editor-font-family, ui-monospace, monospace));
+  --radius: 4px;
+}
+
+* { box-sizing:border-box; }
+body { display:flow-root; margin:0; padding:0; background:transparent; color:var(--ink); font:inherit; line-height:1.5; }
+body > :first-child { margin-top:0; }
+body > :last-child { margin-bottom:0; }
+h1, h2, h3, h4 { font-weight:600; line-height:1.3; margin:1em 0 .4em; }
+h1 { font-size:1.3em; } h2 { font-size:1.15em; } h3 { font-size:1em; } h4 { font-size:.95em; }
+p { margin:.5em 0; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+code, .num, .money { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+code { font-size:.92em; background:var(--card); padding:.1em .35em; border-radius:3px; }
+hr { border:0; border-top:1px solid var(--line); margin:1em 0; }
+
+/* Hero + sections */
+.hero, header.hero { margin:0 0 .75em; }
+.hero h1, .hero h2 { margin:.1em 0 .2em; }
+.eyebrow { font-size:.75em; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--ink-2); }
+.hero .sub { color:var(--ink-2); margin:.2em 0 0; }
+.hero .meta { display:flex; flex-wrap:wrap; gap:4px 16px; margin-top:6px; color:var(--ink-3); font-size:.88em; }
+.hero .meta b { color:var(--ink-2); font-weight:600; }
+section { margin-top:1.25em; }
+.section-head { margin-bottom:.5em; }
+.section-head p { color:var(--ink-2); }
+
+/* Stat tiles — children stack, so <b>value</b><span>label</span> needs no extra classes */
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin:.5em 0; }
+.tile { display:flex; flex-direction:column; gap:2px; background:var(--card); border-radius:var(--radius); padding:10px 12px; }
+.tile > b, .tile > strong, .tile .value { order:0; font-size:1.35em; font-weight:600; line-height:1.2; color:var(--ink); }
+.tile > span, .tile .label { color:var(--ink-2); font-size:.85em; }
+.tile .label { order:-1; text-transform:uppercase; letter-spacing:.05em; font-size:.72em; font-weight:600; }
+.tile .note { color:var(--ink-3); font-size:.82em; }
+
+/* Cards — status carried by the heading colour */
+.card { background:var(--card); border-radius:var(--radius); padding:10px 12px; margin:.5em 0; }
+.card > h3:first-child, .card > h4:first-child { margin:0 0 .25em; }
+.card.crit > h3, .card.crit > h4 { color:var(--crit); } .card.ok > h3, .card.ok > h4 { color:var(--good); }
+.card.warn > h3, .card.warn > h4 { color:var(--warn); } .card.accent > h3, .card.accent > h4 { color:var(--accent); }
+.card .why { font-size:.88em; color:var(--ink-2); margin-top:6px; }
+.card > p:first-child { margin-top:0; } .card > p:last-child { margin-bottom:0; }
+
+/* Badges */
+.state, .pill { display:inline-flex; align-items:center; gap:5px; font-size:.78em; font-weight:600;
+  border-radius:99px; padding:1px 8px; vertical-align:1px; background:var(--hold-soft); color:var(--ink-2); }
+.state.ok, .pill.ok { background:var(--good-soft); color:var(--good); }
+.state.warn, .pill.warn { background:var(--warn-soft); color:var(--warn); }
+.state.crit, .pill.crit { background:var(--crit-soft); color:var(--crit); }
+.state.hold, .pill.hold { background:var(--hold-soft); color:var(--hold); }
+.state.accent, .pill.accent { background:var(--accent-soft); color:var(--accent); }
+
+/* Callout — a quiet rule on the left, like a blockquote */
+.callout { border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:0 var(--radius) var(--radius) 0;
+  padding:8px 12px; margin:.5em 0; }
+.callout b { color:var(--accent); }
+.callout.warn { border-color:var(--warn); background:var(--warn-soft); } .callout.warn b { color:var(--warn); }
+.callout.crit { border-color:var(--crit); background:var(--crit-soft); } .callout.crit b { color:var(--crit); }
+
+/* Tables — matches Claude Code's markdown tables */
+.tscroll { overflow-x:auto; }
+table.data { border-collapse:collapse; width:100%; margin:.5em 0; }
+table.data th, table.data td { border:1px solid var(--line); padding:4px 8px; text-align:left; vertical-align:top; }
+table.data th { font-weight:600; }
+table.data td.n, table.data th.n { text-align:right; font-variant-numeric:tabular-nums; }
+table.data tr.hi td { background:var(--accent-soft); }
+table.data tr.dim td { color:var(--ink-3); }
+
+/* Meter */
+.meter { height:6px; border-radius:3px; background:var(--card); overflow:hidden; margin:.5em 0; }
+.meter > span { display:block; height:100%; background:var(--accent); }
+
+/* Legend */
+.legend { display:flex; flex-wrap:wrap; gap:12px; margin:.5em 0; font-size:.88em; color:var(--ink-2); }
+.legend span { display:inline-flex; align-items:center; gap:6px; }
+.swatch { width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+/* Numbered plan */
+ol.plan { list-style:none; counter-reset:step; margin:.5em 0; padding:0; display:grid; gap:6px; }
+ol.plan > li { counter-increment:step; position:relative; padding:2px 0 2px 30px; min-height:22px; }
+ol.plan > li::before { content:counter(step); position:absolute; left:0; top:1px; width:20px; height:20px;
+  border-radius:50%; background:var(--card); color:var(--ink-2); display:flex; align-items:center; justify-content:center;
+  font-size:.8em; font-weight:600; }
+
+/* Footer */
+footer { margin-top:1em; border-top:1px solid var(--line); padding-top:.5em; font-size:.88em; color:var(--ink-3); }
+.disclaimer { border-left:3px solid var(--warn); background:var(--warn-soft); border-radius:0 var(--radius) var(--radius) 0;
+  padding:8px 12px; margin-top:.5em; color:var(--ink-2); }
+.disclaimer b { color:var(--warn); }
+
+/* Prose */
+ul, ol:not(.plan) { padding-left:1.4em; margin:.5em 0; }
+li { margin:.2em 0; }
+blockquote { margin:.5em 0; padding:0 0 0 10px; border-left:3px solid var(--line); color:var(--ink-2); }
+pre { background:var(--card); border-radius:var(--radius); padding:8px; overflow-x:auto; font-family:var(--mono); }
+pre code { background:none; padding:0; }
+
+/* Form controls in html-app, styled like VS Code's */
+button { font:inherit; color:var(--vscode-button-foreground, #fff); background:var(--vscode-button-background, #0078d4);
+  border:1px solid var(--vscode-button-border, transparent); border-radius:2px; padding:3px 12px; cursor:pointer; }
+button:hover { background:var(--vscode-button-hoverBackground, #026ec1); }
+button.secondary { color:var(--vscode-button-secondaryForeground, var(--ink));
+  background:var(--vscode-button-secondaryBackground, var(--card)); }
+input, select, textarea { font:inherit; color:var(--vscode-input-foreground, var(--ink));
+  background:var(--vscode-input-background, transparent); border:1px solid var(--line); border-radius:2px; padding:2px 6px; }
+input:focus, select:focus, textarea:focus, button:focus-visible { outline:1px solid var(--vscode-focusBorder, var(--accent));
+  outline-offset:-1px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }

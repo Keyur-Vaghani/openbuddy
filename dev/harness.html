@@ -1,0 +1,97 @@
+<!doctype html>
+<!-- Dev harness: mimics Claude Code's chat DOM + theme variables and loads dist/injected.js. Serve the repo root. -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>OpenBuddy harness</title>
+<style>
+  body.vscode-dark {
+    --vscode-font-family: -apple-system, BlinkMacSystemFont, sans-serif; --vscode-font-size: 13px;
+    --vscode-editor-font-family: Menlo, Monaco, "Courier New", monospace;
+    --vscode-foreground: #cccccc; --vscode-descriptionForeground: #9d9d9d; --vscode-disabledForeground: #cccccc80;
+    --vscode-sideBar-background: #181818; --vscode-editor-background: #1f1f1f; --vscode-widget-border: #313131;
+    --vscode-textCodeBlock-background: #2b2b2b; --vscode-textPreformat-background: #3c3c3c;
+    --vscode-textLink-foreground: #4daafc; --vscode-input-border: #3c3c3c; --vscode-focusBorder: #0078d4;
+    --vscode-errorForeground: #f85149; --vscode-toolbar-hoverBackground: #5a5d5e50;
+    --vscode-charts-red: #f14c4c; --vscode-charts-blue: #3794ff; --vscode-charts-yellow: #cca700;
+    --vscode-charts-orange: #d18616; --vscode-charts-green: #89d185; --vscode-charts-purple: #b180d7;
+  }
+  body.vscode-light {
+    --vscode-font-family: -apple-system, BlinkMacSystemFont, sans-serif; --vscode-font-size: 13px;
+    --vscode-editor-font-family: Menlo, Monaco, "Courier New", monospace;
+    --vscode-foreground: #3b3b3b; --vscode-descriptionForeground: #717171; --vscode-disabledForeground: #61616180;
+    --vscode-sideBar-background: #f8f8f8; --vscode-editor-background: #ffffff; --vscode-widget-border: #e5e5e5;
+    --vscode-textCodeBlock-background: #f0f0f0; --vscode-textPreformat-background: #e5e5e5;
+    --vscode-textLink-foreground: #005fb8; --vscode-input-border: #cecece; --vscode-focusBorder: #005fb8;
+    --vscode-errorForeground: #f85149; --vscode-toolbar-hoverBackground: #b8b8b850;
+    --vscode-charts-red: #e51400; --vscode-charts-blue: #1a85ff; --vscode-charts-yellow: #bf8803;
+    --vscode-charts-orange: #d18616; --vscode-charts-green: #388a34; --vscode-charts-purple: #652d90;
+  }
+  body {
+    --app-primary-foreground: var(--vscode-foreground); --app-secondary-foreground: var(--vscode-descriptionForeground);
+    --app-primary-background: var(--vscode-sideBar-background); --app-secondary-background: var(--vscode-editor-background);
+    --app-code-background: var(--vscode-textCodeBlock-background); --app-input-border: var(--vscode-input-border);
+    --app-link-foreground: var(--vscode-textLink-foreground); --app-monospace-font-family: var(--vscode-editor-font-family);
+    --app-chart-1: rgb(from var(--vscode-charts-orange, #f97316) r g b / 1); --app-chart-2: var(--vscode-charts-blue);
+    --app-chart-3: var(--vscode-charts-green); --app-chart-4: var(--vscode-charts-yellow);
+    --app-chart-5: var(--vscode-charts-purple); --app-chart-6: var(--vscode-charts-red);
+    margin: 0; padding: 16px; background: var(--app-primary-background); color: var(--app-primary-foreground);
+    font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); line-height: 1.5;
+  }
+  .message { max-width: 560px; margin: 0 auto; }
+  [class*="codeBlockWrapper_"] { position: relative; margin: 8px 0; }
+  [class*="codeBlockWrapper_"] pre { overflow-x: auto; background: var(--app-code-background); border-radius: 4px;
+    margin: 0; padding: 8px; font-family: var(--app-monospace-font-family); }
+</style>
+</head>
+<body class="vscode-dark">
+<div class="message" data-testid="assistant-message">
+<p>Theme: <a href="?light">light</a> · <a href="?">dark</a>. Prose math: hit rate $h = 0.9$ gives $\bar t = 8.4$ ms.</p>
+
+<p><strong>Flowchart</strong></p>
+<div class="codeBlockWrapper_dev"><pre><code class="language-mermaid">flowchart LR
+  A[Client request] --> B{In cache?}
+  B -- Hit --> C[Return cached value]
+  B -- Miss --> D[Query database]
+  D --> E[Write to cache with TTL]
+  E --> C</code></pre></div>
+
+<p><strong>Chart</strong></p>
+<div class="codeBlockWrapper_dev"><pre><code class="language-chart">{"type":"bar","data":{"labels":["Cache hit","Cache miss","No cache"],
+"datasets":[{"label":"p50 latency (ms)","data":[4,48,42]}]},"options":{"plugins":{"legend":{"display":false}}}}</code></pre></div>
+
+<p><strong>Math</strong></p>
+<div class="codeBlockWrapper_dev"><pre><code class="language-math">\bar{t} = h \, t_{\text{hit}} + (1 - h)\, t_{\text{miss}}
+
+\bar{t}\big|_{h=0.9} = 0.9 \cdot 4 + 0.1 \cdot 48 = 8.4\ \text{ms}</code></pre></div>
+
+<p><strong>HTML preview</strong></p>
+<div class="codeBlockWrapper_dev"><pre><code class="language-html-preview">&lt;div class="hero"&gt;
+  &lt;div class="eyebrow"&gt;Cache health&lt;/div&gt;
+  &lt;h2&gt;Read-through cache&lt;/h2&gt;
+&lt;/div&gt;
+&lt;div class="tiles"&gt;
+  &lt;div class="tile"&gt;&lt;b&gt;90%&lt;/b&gt;&lt;span&gt;Hit rate&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="tile"&gt;&lt;b&gt;8.4 ms&lt;/b&gt;&lt;span&gt;Expected latency&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="tile"&gt;&lt;b&gt;300 s&lt;/b&gt;&lt;span&gt;TTL&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="card ok"&gt;
+  &lt;span class="pill ok"&gt;Healthy&lt;/span&gt; At 90% hits, average latency is about 5× lower than with no cache.
+&lt;/div&gt;
+&lt;table class="data"&gt;&lt;tr&gt;&lt;th&gt;Path&lt;/th&gt;&lt;th&gt;p50&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Hit&lt;/td&gt;&lt;td class="n"&gt;4 ms&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Miss&lt;/td&gt;&lt;td class="n"&gt;48 ms&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;div class="callout warn"&gt;&lt;b&gt;Watch:&lt;/b&gt; TTL above 10 min serves stale prices.&lt;/div&gt;
+&lt;ol class="plan"&gt;&lt;li&gt;&lt;b&gt;Warm the cache&lt;/b&gt; on deploy.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Alert&lt;/b&gt; when hit rate drops below 80%.&lt;/li&gt;&lt;/ol&gt;
+&lt;div class="meter"&gt;&lt;span style="width:90%"&gt;&lt;/span&gt;&lt;/div&gt;</code></pre></div>
+
+<p><strong>HTML app</strong></p>
+<div class="codeBlockWrapper_dev"><pre><code class="language-html-app">&lt;div class="card"&gt;&lt;h3&gt;Counter&lt;/h3&gt;&lt;p&gt;Clicks: &lt;b id="n"&gt;0&lt;/b&gt;&lt;/p&gt;
+&lt;button onclick="document.getElementById('n').textContent = ++window.c || (window.c = 1)"&gt;Click&lt;/button&gt;&lt;/div&gt;</code></pre></div>
+<p>Closing prose after the last block.</p>
+</div>
+<script>
+  if (location.search.includes("light")) document.body.className = "vscode-light";
+</script>
+<script src="../dist/injected.js"></script>
+</body>
+</html>

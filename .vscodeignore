@@ -1,0 +1,10 @@
+src/**
+dev/**
+media/*.svg
+media/social-preview.png
+media/demo.mp4
+node_modules/**
+build.mjs
+tsconfig.json
+**/*.map
+.gitignore

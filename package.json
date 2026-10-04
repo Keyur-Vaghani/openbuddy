@@ -1,0 +1,77 @@
+{
+  "name": "openbuddy",
+  "displayName": "OpenBuddy",
+  "description": "Open-source add-ons for the Claude Code chat in VS Code: renders diagrams, charts, math and live HTML right inside Claude's replies.",
+  "version": "0.1.1",
+  "publisher": "KeyurVaghani",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KeyurVaghani/openbuddy.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "claude code",
+    "mermaid",
+    "chart",
+    "math",
+    "katex"
+  ],
+  "main": "./dist/extension.js",
+  "exports": {
+    "./host": "./src/host/index.ts",
+    "./webview": "./src/webview/index.ts",
+    "./assets/preview.css": "./assets/preview.css",
+    "./package.json": "./package.json"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run build && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "dompurify": "^3.4.16",
+    "katex": "^0.16.47",
+    "mermaid": "^11.17.2",
+    "sval": "^0.6.12"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "openbuddy.apply",
+        "title": "OpenBuddy: Enable in Claude Code Chat",
+        "category": "OpenBuddy"
+      },
+      {
+        "command": "openbuddy.remove",
+        "title": "OpenBuddy: Remove from Claude Code Chat",
+        "category": "OpenBuddy"
+      },
+      {
+        "command": "openbuddy.copyInstructions",
+        "title": "OpenBuddy: Copy Claude Instructions",
+        "category": "OpenBuddy"
+      }
+    ]
+  }
+}
